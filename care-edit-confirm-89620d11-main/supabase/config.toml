@@ -1,0 +1,16 @@
+project_id = "uzvqtelzdbhehiyupiup"
+
+[functions.mongodb-images]
+verify_jwt = false
+
+[functions.mongodb-users]
+verify_jwt = false
+
+[functions.mongodb-reports]
+verify_jwt = false
+
+[functions.mongodb-blogs]
+verify_jwt = false
+
+[functions.mongodb-appointments]
+verify_jwt = false

@@ -1,0 +1,1457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Health Monitoring</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+
+        .page {
+            display: none;
+            min-height: 100vh;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        /* Auth Page Styles */
+        .auth-page {
+            background: white;
+            box-shadow: 0 0 30px rgba(0,0,0,0.1);
+        }
+
+        .form-section {
+            display: none;
+        }
+
+        .form-section.active {
+            display: block;
+        }
+
+        .nav-tabs {
+            border-bottom: none;
+            margin-bottom: 2rem;
+            justify-content: center;
+        }
+
+        .nav-tabs .nav-link {
+            color: #6c757d;
+            border: none;
+            border-bottom: 3px solid transparent;
+            background: none;
+            padding: 10px 15px;
+            margin: 0 2px;
+            border-radius: 0;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .nav-tabs .nav-link:hover {
+            border-bottom-color: #0d6efd;
+            color: #0d6efd;
+        }
+
+        .nav-tabs .nav-link.active {
+            color: #0d6efd;
+            border-bottom: 3px solid #0d6efd;
+            background: none;
+        }
+
+        .form-container {
+            max-width: 450px;
+            margin: 0 auto;
+        }
+
+        .form-control, .form-select {
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 12px 15px;
+            margin-bottom: 15px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 8px;
+            padding: 12px;
+            font-weight: 600;
+            transition: transform 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .right-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .logo-placeholder {
+            width: 120px;
+            height: 80px;
+            background: linear-gradient(45deg, #0d6efd, #6610f2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+            margin: 0 auto 20px;
+        }
+
+        .text-logo {
+            background: linear-gradient(45deg, #0d6efd, #6610f2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: bold;
+        }
+
+        /* Main App Styles */
+        .main-nav {
+            background: white !important;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 150px 0 100px;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .hero .playwritter {
+            font-family: 'Brush Script MT', cursive;
+            color: #FFD700;
+        }
+
+        /* Doctor Dashboard Styles */
+        .approval-card {
+            border: none;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            border-radius: 10px;
+        }
+
+        .approval-card.pending {
+            border-left: 4px solid #ffc107;
+        }
+
+        .approval-card.approved {
+            border-left: 4px solid #28a745;
+        }
+
+        .approval-card.rejected {
+            border-left: 4px solid #dc3545;
+        }
+
+        .status-badge {
+            font-size: 0.8rem;
+            padding: 4px 8px;
+        }
+
+        /* Chatbot Styles */
+        #chatbot_toggler {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1001;
+            transition: all 0.3s ease;
+        }
+
+        #chatbot_toggler:hover {
+            transform: scale(1.1);
+        }
+
+        .chatbot_popup {
+            position: fixed;
+            bottom: 100px;
+            right: 30px;
+            width: 350px;
+            height: 500px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            display: none;
+            z-index: 1000;
+            flex-direction: column;
+        }
+
+        .chatbot_popup.show {
+            display: flex;
+        }
+
+        .chat_header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat_body {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            max-height: 350px;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .message.user_message {
+            justify-content: flex-end;
+        }
+
+        .message_text {
+            background: #f1f3f4;
+            padding: 10px 15px;
+            border-radius: 15px;
+            max-width: 80%;
+        }
+
+        .user_message .message_text {
+            background: #0d6efd;
+            color: white;
+        }
+
+        .bot_avathar {
+            width: 30px;
+            height: 30px;
+            margin-right: 10px;
+        }
+
+        .chat_footer {
+            padding: 15px;
+            border-top: 1px solid #eee;
+        }
+
+        .chat_form {
+            display: flex;
+            gap: 10px;
+        }
+
+        .message_input {
+            flex: 1;
+            border: 1px solid #ddd;
+            border-radius: 25px;
+            padding: 10px 15px;
+            resize: none;
+            height: 40px;
+        }
+
+        .chat_controls button {
+            background: none;
+            border: none;
+            padding: 8px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        /* Profile Styles */
+        .cancel_profile {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            z-index: 100;
+        }
+
+        .left_content {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .qr_image {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .qr_image img {
+            max-width: 100%;
+            border-radius: 10px;
+        }
+
+        .right_content {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            min-height: 400px;
+            padding: 30px;
+        }
+
+        /* PDF Report Styles */
+        .report-content {
+            background: white;
+            padding: 40px;
+            margin: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .report-buttons {
+            text-align: center;
+            margin: 20px;
+        }
+
+        .report-buttons button {
+            margin: 10px;
+            min-width: 150px;
+        }
+
+        /* Alert Styles */
+        .pending-approval-alert {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-tabs .nav-link {
+                padding: 8px 8px;
+                font-size: 0.8rem;
+            }
+            
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .chatbot_popup {
+                width: 90%;
+                right: 5%;
+            }
+            
+            #chatbot_toggler {
+                width: 50px;
+                height: 50px;
+            }
+        }
+
+        /* Loading Animation */
+        .thinking_indicator {
+            display: flex;
+            gap: 5px;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #666;
+            animation: thinking 1.4s infinite ease-in-out;
+        }
+
+        .dot:nth-child(1) { animation-delay: -0.32s; }
+        .dot:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes thinking {
+            0%, 80%, 100% {
+                transform: scale(0);
+            }
+            40% {
+                transform: scale(1);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Authentication Page -->
+    <div id="auth-page" class="page active">
+        <div class="row auth-page">
+            <div class="col-12 col-md-6 col-xl-6 col-lg-6 col-xxl-6">
+                <div class="header pt-4 ps-4 pe-4 d-flex flex-column align-items-center">
+                    <div class="logo-placeholder mb-3">
+                        <i class="fa fa-heartbeat fa-2x"></i>
+                    </div>
+                    <h2 class="text-logo mb-4">Smart Health Monitoring</h2>
+                    
+                    <ul class="nav nav-tabs w-100" id="authTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="doctor-login-tab" data-form="doctor-login">Doctor Login</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="doctor-signup-tab" data-form="doctor-signup">Doctor Signup</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="patient-login-tab" data-form="patient-login">Patient Login</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="patient-signup-tab" data-form="patient-signup">Patient Signup</button>
+                        </li>
+                    </ul>
+
+                    <div class="form-container w-100">
+                        <!-- Doctor Login Form -->
+                        <div class="form-section active" id="doctor-login">
+                            <form id="doctor-login-form">
+                                <div class="text-center mb-4">
+                                    <h3 class="fw-bolder">Doctor Login</h3>
+                                    <p class="h5 text-muted">Healing Hands, Helping Hearts</p>
+                                    <p class="h5 text-muted">Care. Cure. Connect</p>
+                                    <p class="mt-3 fs-6 fw-bold text-primary">Log back in</p>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="doctor-license-login" class="form-label">License Number</label>
+                                    <input type="text" id="doctor-license-login" class="form-control" placeholder="Try: DOC001 or DOC002" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="doctor-password-login" class="form-label">Password</label>
+                                    <input type="password" id="doctor-password-login" class="form-control" placeholder="Try: password123" required>
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100">Login</button>
+                                <div class="text-center mt-3">
+                                    <small class="text-muted">Demo Credentials: DOC001/password123 or DOC002/password123</small>
+                                </div>
+                            </form>
+                        </div>
+
+                        <!-- Doctor Signup Form -->
+                        <div class="form-section" id="doctor-signup">
+                            <form id="doctor-signup-form">
+                                <div class="text-center mb-4">
+                                    <h3 class="fw-bolder">Doctor Signup</h3>
+                                    <p class="h5 text-muted">Join our healthcare network</p>
+                                    <p class="mt-3 fs-6 fw-bold text-primary">Create new account</p>
+                                </div>
+                                
+                                <div class="mb-2">
+                                    <label for="doctor-name" class="form-label">Name</label>
+                                    <input type="text" id="doctor-name" class="form-control" required>
+                                </div>
+                                <div class="mb-2">
+                                    <label for="doctor-age" class="form-label">Age</label>
+                                    <input type="number" id="doctor-age" class="form-control" min="25" max="80" required>
+                                </div>
+                                <div class="mb-2">
+                                    <label for="doctor-dob" class="form-label">Date of Birth</label>
+                                    <input type="date" id="doctor-dob" class="form-control" required>
+                                </div>
+                                <div class="mb-2">
+                                    <label for="doctor-gender" class="form-label">Gender</label>
+                                    <select id="doctor-gender" class="form-select" required>
+                                        <option value="">Select Gender</option>
+                                        <option value="Male">Male</option>
+                                        <option value="Female">Female</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
+                                <div class="mb-2">
+                                    <label for="doctor-license" class="form-label">License Number</label>
+                                    <input type="text" id="doctor-license" class="form-control" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="doctor-specialization" class="form-label">Specialization</label>
+                                    <select class="form-select" id="doctor-specialization" required>
+                                        <option value="">Select Specialization</option>
+                                        <option value="General Medicine">General Medicine</option>
+                                        <option value="Cardiology">Cardiology</option>
+                                        <option value="Dermatology">Dermatology</option>
+                                        <option value="Orthopedics">Orthopedics</option>
+                                        <option value="Neurology">Neurology</option>
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100">Sign Up</button>
+                            </form>
+                        </div>
+
+                        <!-- Patient Login Form -->
+                        <div class="form-section" id="patient-login">
+                            <form id="patient-login-form">
+                                <div class="text-center mb-4">
+                                    <h3 class="fw-bolder">Patient Login</h3>
+                                    <p class="h5 text-muted">Your Health, Our Priority</p>
+                                    <p class="mt-3 fs-6 fw-bold text-primary">Log back in</p>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="patient-medical-id" class="form-label">Medical ID</label>
+                                    <input type="text" id="patient-medical-id" class="form-control" placeholder="Try: PAT001 or PAT002" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="patient-password-login" class="form-label">Password</label>
+                                    <input type="password" id="patient-password-login" class="form-control" placeholder="Try: patient123" required>
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100">Login</button>
+                                <div class="text-center mt-3">
+                                    <small class="text-muted">Demo Credentials: PAT001/patient123 or PAT002/patient123</small>
+                                </div>
+                            </form>
+                        </div>
+
+                        <!-- Patient Signup Form -->
+                        <div class="form-section" id="patient-signup">
+                            <form id="patient-signup-form">
+                                <div class="text-center mb-4">
+                                    <h3 class="fw-bolder">Patient Signup</h3>
+                                    <p class="h5 text-muted">Join our health community</p>
+                                    <p class="mt-3 fs-6 fw-bold text-primary">Create new account</p>
+                                    <div class="alert alert-info mt-3">
+                                        <i class="fas fa-info-circle me-2"></i>
+                                        Your registration will be reviewed and approved by our medical team.
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-2">
+                                    <label for="patient-name" class="form-label">Name</label>
+                                    <input type="text" id="patient-name" class="form-control" required>
+                                </div>
+                                <div class="mb-2">
+                                    <label for="patient-age" class="form-label">Age</label>
+                                    <input type="number" id="patient-age" class="form-control" min="1" max="120" required>
+                                </div>
+                                <div class="mb-2">
+                                    <label for="patient-dob" class="form-label">Date of Birth</label>
+                                    <input type="date" id="patient-dob" class="form-control" required>
+                                </div>
+                                <div class="mb-2">
+                                    <label for="patient-gender" class="form-label">Gender</label>
+                                    <select id="patient-gender" class="form-select" required>
+                                        <option value="">Select Gender</option>
+                                        <option value="Male">Male</option>
+                                        <option value="Female">Female</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
+                                <div class="mb-2">
+                                    <label for="patient-phone" class="form-label">Phone Number</label>
+                                    <input type="tel" id="patient-phone" class="form-control" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="patient-medical-condition" class="form-label">Medical Conditions (Optional)</label>
+                                    <textarea id="patient-medical-condition" class="form-control" rows="2" placeholder="List any current medical conditions or medications"></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100">Submit for Approval</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-6 col-xl-6 col-lg-6 col-xxl-6 d-none d-md-block right-section">
+                <div class="row h-100">
+                    <div class="col-12 pt-5 ps-5 pe-4 d-flex flex-column justify-content-center">
+                        <div id="doctor-content">
+                            <h1 class="mb-4">Compassion is the soul of medicine</h1>
+                            <h1 class="mb-4">Join us and shape the future!</h1>
+                            <h3 class="mt-5">Healing is a matter of time</h3>
+                        </div>
+                        <div id="patient-content" style="display: none;">
+                            <h1 class="mb-4">Hope Heals, We Care</h1>
+                            <h1 class="mb-4">Connect and navigate your health!</h1>
+                            <h3 class="mt-5">Rest Assured, You're in Good Hands</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Application Page -->
+    <div id="main-page" class="page">
+        <!-- Navigation -->
+        <nav class="navbar navbar-expand-lg main-nav position-fixed w-100">
+            <div class="container">
+                <a class="navbar-brand" href="#" onclick="showPage('main-page')">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-heartbeat text-primary me-2"></i>
+                        <span class="fw-bold text-primary">Smart Health</span>
+                    </div>
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav mx-auto">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#" onclick="showPage('main-page')">Home</a>
+                        </li>
+                        <li class="nav-item" id="doctor-nav" style="display: none;">
+                            <a class="nav-link" href="#" onclick="showPage('doctor-dashboard')">Patient Approvals</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Consultation</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">About</a>
+                        </li>
+                    </ul>
+                    <button class="btn btn-outline-primary rounded-pill px-4" onclick="showPage('profile-page')">
+                        <i class="fas fa-user me-2"></i>Profile
+                    </button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Hero Section -->
+        <div class="hero">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-lg-8 text-center">
+                        <h1 class="display-4">Choose your doctor</h1>
+                        <p class="playwritter fs-2 fw-bold mb-3">With confidence</p>
+                        <p class="fs-5 mb-4">Find trusted professionals for your health needs</p>
+                        <button class="btn btn-light btn-lg rounded-pill px-5">
+                            <i class="fas fa-calendar-check me-2"></i>Book now
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pending Approval Alert for Patients -->
+        <div id="pending-alert" class="pending-approval-alert" style="display: none;">
+            <i class="fas fa-hourglass-half me-2"></i>
+            Your registration is pending approval from our medical team. You'll be notified once approved.
+        </div>
+
+        <!-- Services Section -->
+        <div class="container my-5">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body text-center p-4">
+                            <i class="fas fa-stethoscope fa-3x text-primary mb-3"></i>
+                            <h5 class="card-title">Expert Consultation</h5>
+                            <p class="card-text">Connect with certified doctors for professional medical advice.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body text-center p-4">
+                            <i class="fas fa-chart-line fa-3x text-success mb-3"></i>
+                            <h5 class="card-title">Health Monitoring</h5>
+                            <p class="card-text">Track your health metrics with our smart monitoring system.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body text-center p-4">
+                            <i class="fas fa-mobile-alt fa-3x text-info mb-3"></i>
+                            <h5 class="card-title">24/7 Support</h5>
+                            <p class="card-text">Get round-the-clock support through our AI-powered chatbot.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Doctor Dashboard Page -->
+    <div id="doctor-dashboard" class="page">
+        <button class="cancel_profile" onclick="showPage('main-page')">
+            <i class="fas fa-times"></i>
+        </button>
+        <div class="container-fluid p-5">
+            <div class="row">
+                <div class="col-12">
+                    <h1 class="mb-4">
+                        <i class="fas fa-user-check text-primary me-2"></i>Patient Approval Dashboard
+                    </h1>
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-3">
+                            <div class="card bg-warning text-white">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-hourglass-half fa-2x mb-2"></i>
+                                    <h4 id="pending-count">2</h4>
+                                    <small>Pending Approvals</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card bg-success text-white">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-check-circle fa-2x mb-2"></i>
+                                    <h4 id="approved-count">1</h4>
+                                    <small>Approved Patients</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card bg-danger text-white">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-times-circle fa-2x mb-2"></i>
+                                    <h4 id="rejected-count">0</h4>
+                                    <small>Rejected Applications</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card bg-info text-white">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-users fa-2x mb-2"></i>
+                                    <h4 id="total-count">3</h4>
+                                    <small>Total Applications</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="patient-approvals">
+                        <!-- Patient approval cards will be populated here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Page -->
+    <div id="profile-page" class="page">
+        <button class="cancel_profile" onclick="showPage('main-page')">
+            <i class="fas fa-times"></i>
+        </button>
+        <div class="container-fluid p-5">
+            <div class="row">
+                <div class="col-12 col-md-4 col-lg-3">
+                    <div class="left_content p-4">
+                        <div class="qr_image mb-4">
+                            <div class="bg-light p-4 rounded text-center">
+                                <i class="fas fa-qrcode fa-5x text-muted"></i>
+                                <p class="mt-2 text-muted">QR Code</p>
+                            </div>
+                        </div>
+                        <div class="user_details">
+                            <p class="fs-6 mb-2"><strong>Name:</strong> <span id="profile-name">John Smith</span></p>
+                            <p class="fs-6 mb-2"><strong>DOB:</strong> <span id="profile-dob">January 15, 1985</span></p>
+                            <p class="fs-6 mb-2"><strong>Gender:</strong> <span id="profile-gender">Male</span></p>
+                            <p class="fs-6 mb-2"><strong>Age:</strong> <span id="profile-age">39</span></p>
+                            <p class="fs-6 mb-2"><strong>Phone:</strong> <span id="profile-phone">+1234567890</span></p>
+                            <p class="fs-6 mb-3"><strong>Status:</strong> <span id="profile-status" class="badge bg-success">Approved</span></p>
+                        </div>
+                        <button class="btn btn-primary w-100 mb-3">
+                            <i class="fas fa-edit me-2"></i>Edit Profile
+                        </button>
+                        <button class="btn btn-success w-100" onclick="showPage('report-page')" id="view-reports-btn">
+                            <i class="fas fa-file-medical me-2"></i>View Reports
+                        </button>
+                    </div>
+                </div>
+                <div class="col-12 col-md-8 col-lg-9 mt-3 mt-md-0">
+                    <div class="right_content">
+                        <h3 class="mb-4">
+                            <i class="fas fa-chart-area text-primary me-2"></i>Health Dashboard
+                        </h3>
+                        <div id="health-dashboard">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <div class="card border-0 bg-light">
+                                        <div class="card-body text-center">
+                                            <i class="fas fa-heartbeat text-danger fa-2x mb-2"></i>
+                                            <h5 class="card-title">Heart Rate</h5>
+                                            <p class="card-text display-6">72 <small class="text-muted">bpm</small></p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <div class="card border-0 bg-light">
+                                        <div class="card-body text-center">
+                                            <i class="fas fa-thermometer-half text-warning fa-2x mb-2"></i>
+                                            <h5 class="card-title">Temperature</h5>
+                                            <p class="card-text display-6">98.6 <small class="text-muted">°F</small></p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <div class="card border-0 bg-light">
+                                        <div class="card-body text-center">
+                                            <i class="fas fa-tachometer-alt text-info fa-2x mb-2"></i>
+                                            <h5 class="card-title">Blood Pressure</h5>
+                                            <p class="card-text display-6">120/80 <small class="text-muted">mmHg</small></p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <div class="card border-0 bg-light">
+                                        <div class="card-body text-center">
+                                            <i class="fas fa-lungs text-success fa-2x mb-2"></i>
+                                            <h5 class="card-title">Oxygen Level</h5>
+                                            <p class="card-text display-6">98 <small class="text-muted">%</small></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="pending-dashboard" class="text-center" style="display: none;">
+                            <div class="alert alert-warning">
+                                <i class="fas fa-hourglass-half fa-3x mb-3"></i>
+                                <h4>Account Pending Approval</h4>
+                                <p>Your registration is being reviewed by our medical team. Once approved, you'll have access to all health monitoring features.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4" id="activities-section">
+                            <h5><i class="fas fa-history text-primary me-2"></i>Recent Activities</h5>
+                            <div class="list-group">
+                                <div class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <i class="fas fa-calendar-check text-primary me-2"></i>
+                                        Last Checkup
+                                    </div>
+                                    <span class="badge bg-primary rounded-pill">2 days ago</span>
+                                </div>
+                                <div class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <i class="fas fa-pills text-warning me-2"></i>
+                                        Medication Reminder
+                                    </div>
+                                    <span class="badge bg-warning rounded-pill">Today</span>
+                                </div>
+                                <div class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <i class="fas fa-file-medical-alt text-success me-2"></i>
+                                        Lab Results
+                                    </div>
+                                    <span class="badge bg-success rounded-pill">1 week ago</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Report Page -->
+    <div id="report-page" class="page">
+        <div class="report-content" id="report-content">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1><i class="fas fa-file-medical text-primary me-2"></i>Medical Record</h1>
+                <button class="btn btn-outline-secondary" onclick="showPage('profile-page')">
+                    <i class="fas fa-arrow-left me-2"></i>Back
+                </button>
+            </div>
+            <hr>
+            
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <p class="fs-5 mb-2"><strong>Name:</strong> <span id="report-name">John Smith</span></p>
+                    <p class="fs-5 mb-2"><strong>DOB:</strong> <span id="report-dob">January 15, 1985</span></p>
+                    <p class="fs-5 mb-2"><strong>Gender:</strong> <span id="report-gender">Male</span></p>
+                </div>
+                <div class="col-md-6">
+                    <p class="fs-5 mb-2"><strong>Age:</strong> <span id="report-age">39</span></p>
+                    <p class="fs-5 mb-2"><strong>Phone:</strong> <span id="report-phone">+1234567890</span></p>
+                    <p class="fs-5 mb-2"><strong>Report Date:</strong> <span id="report-date">September 16, 2024</span></p>
+                </div>
+            </div>
+            <p class="fs-5 mb-4"><strong>Doctor:</strong> <span id="report-doctor">Dr. Sarah Johnson</span></p>
+            
+            <hr>
+            
+            <div class="mt-4">
+                <h4 class="text-primary"><i class="fas fa-stethoscope me-2"></i>Symptoms:</h4>
+                <ul class="fs-6 ms-4">
+                    <li>Mild headache and fatigue</li>
+                    <li>Occasional dizziness</li>
+                    <li>Sleep disturbances</li>
+                </ul>
+                
+                <h4 class="text-primary mt-4"><i class="fas fa-diagnoses me-2"></i>Diagnosis:</h4>
+                <ul class="fs-6 ms-4">
+                    <li>Stress-related fatigue syndrome</li>
+                    <li>Mild dehydration</li>
+                    <li>Recommended lifestyle changes</li>
+                </ul>
+                
+                <h4 class="text-primary mt-4"><i class="fas fa-flask me-2"></i>Tests Conducted:</h4>
+                <ul class="fs-6 ms-4">
+                    <li>Complete Blood Count (CBC) - Normal</li>
+                    <li>Blood Pressure Monitoring - 120/80 mmHg</li>
+                    <li>Heart Rate Variability - Within normal range</li>
+                </ul>
+                
+                <h4 class="text-primary mt-4"><i class="fas fa-prescription-bottle-alt me-2"></i>Treatment Plan:</h4>
+                <ul class="fs-6 ms-4">
+                    <li>Increase daily water intake to 8-10 glasses</li>
+                    <li>Regular exercise - 30 minutes daily</li>
+                    <li>Stress management techniques</li>
+                    <li>Follow-up appointment in 2 weeks</li>
+                </ul>
+            </div>
+            
+            <hr>
+            <div class="mt-4">
+                <h5 class="text-primary"><i class="fas fa-sticky-note me-2"></i>Additional Notes:</h5>
+                <p class="fs-6">Patient is advised to maintain a balanced diet and ensure adequate sleep. Continue monitoring symptoms and report any worsening conditions immediately.</p>
+            </div>
+        </div>
+
+        <div class="report-buttons">
+            <button class="btn btn-primary" onclick="downloadPDF()">
+                <i class="fas fa-download me-2"></i>Download as PDF
+            </button>
+            <button class="btn btn-outline-primary" onclick="showPage('profile-page')">
+                <i class="fas fa-user me-2"></i>Back to Profile
+            </button>
+        </div>
+    </div>
+
+    <!-- Chatbot -->
+    <button id="chatbot_toggler">
+        <i class="fas fa-comments"></i>
+    </button>
+    
+    <div class="chatbot_popup" id="chatbot_popup">
+        <div class="chat_header">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-robot me-2"></i>
+                <h6 class="mb-0">Health Assistant</h6>
+            </div>
+            <button id="close_chatbot" class="btn btn-link text-white p-0">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <div class="chat_body" id="chat_body">
+            <div class="message bot_message">
+                <i class="fas fa-robot bot_avathar text-primary"></i>
+                <div class="message_text">
+                    Hey there! 👋<br>
+                    How can I help you with your health today?
+                </div>
+            </div>
+        </div>
+
+        <div class="chat_footer">
+            <form class="chat_form" id="chat_form">
+                <textarea 
+                    placeholder="Type your health question..." 
+                    class="message_input" 
+                    id="message_input"
+                    rows="1"
+                    required
+                ></textarea>
+                <div class="chat_controls d-flex">
+                    <button type="submit" id="send_message">
+                        <i class="fas fa-paper-plane text-primary"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <script>
+        // Global variables
+        let currentUser = null;
+        let chatMessages = [];
+
+        // Pre-existing users database
+        const users = {
+            doctors: [
+                {
+                    id: 'DOC001',
+                    password: 'password123',
+                    name: 'Dr. Sarah Johnson',
+                    age: 42,
+                    dob: '1982-03-15',
+                    gender: 'Female',
+                    license: 'DOC001',
+                    specialization: 'General Medicine',
+                    phone: '+1-555-0101'
+                },
+                {
+                    id: 'DOC002',
+                    password: 'password123',
+                    name: 'Dr. Michael Chen',
+                    age: 38,
+                    dob: '1985-07-22',
+                    gender: 'Male',
+                    license: 'DOC002',
+                    specialization: 'Cardiology',
+                    phone: '+1-555-0102'
+                }
+            ],
+            patients: [
+                {
+                    id: 'PAT001',
+                    password: 'patient123',
+                    name: 'John Smith',
+                    age: 39,
+                    dob: '1985-01-15',
+                    gender: 'Male',
+                    phone: '+1234567890',
+                    status: 'approved',
+                    medicalConditions: 'Hypertension, managed with medication'
+                },
+                {
+                    id: 'PAT002',
+                    password: 'patient123',
+                    name: 'Emily Davis',
+                    age: 28,
+                    dob: '1996-05-10',
+                    gender: 'Female',
+                    phone: '+1987654321',
+                    status: 'approved',
+                    medicalConditions: 'No known medical conditions'
+                }
+            ]
+        };
+
+        // Pending patient applications
+        let pendingPatients = [
+            {
+                id: 'PAT003',
+                name: 'Robert Wilson',
+                age: 45,
+                dob: '1979-08-20',
+                gender: 'Male',
+                phone: '+1555123456',
+                medicalConditions: 'Diabetes Type 2, taking metformin',
+                status: 'pending',
+                submissionDate: '2024-09-14'
+            },
+            {
+                id: 'PAT004',
+                name: 'Lisa Anderson',
+                age: 33,
+                dob: '1991-12-03',
+                gender: 'Female',
+                phone: '+1555987654',
+                medicalConditions: 'Asthma, uses inhaler as needed',
+                status: 'pending',
+                submissionDate: '2024-09-15'
+            }
+        ];
+
+        // Page Navigation
+        function showPage(pageId) {
+            // Hide all pages
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            // Show selected page
+            document.getElementById(pageId).classList.add('active');
+            
+            // Update navigation active state
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+
+            // Load specific page content
+            if (pageId === 'doctor-dashboard' && currentUser && currentUser.type === 'doctor') {
+                loadDoctorDashboard();
+            }
+        }
+
+        // Authentication Tab Switching
+        document.addEventListener('DOMContentLoaded', function() {
+            const tabs = document.querySelectorAll('[data-form]');
+            const formSections = document.querySelectorAll('.form-section');
+            const doctorContent = document.getElementById('doctor-content');
+            const patientContent = document.getElementById('patient-content');
+
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const targetForm = this.getAttribute('data-form');
+                    
+                    // Hide all form sections
+                    formSections.forEach(section => {
+                        section.classList.remove('active');
+                    });
+                    
+                    // Show target form section
+                    document.getElementById(targetForm).classList.add('active');
+                    
+                    // Update right side content
+                    if (targetForm.includes('patient')) {
+                        doctorContent.style.display = 'none';
+                        patientContent.style.display = 'block';
+                    } else {
+                        doctorContent.style.display = 'block';
+                        patientContent.style.display = 'none';
+                    }
+                    
+                    // Update active tab
+                    tabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+
+            // Form submissions
+            document.getElementById('doctor-login-form').addEventListener('submit', handleLogin);
+            document.getElementById('doctor-signup-form').addEventListener('submit', handleSignup);
+            document.getElementById('patient-login-form').addEventListener('submit', handleLogin);
+            document.getElementById('patient-signup-form').addEventListener('submit', handlePatientSignup);
+
+            // DOB to Age calculation
+            const dobInputs = document.querySelectorAll('[id$="-dob"]');
+            const ageInputs = document.querySelectorAll('[id$="-age"]');
+            
+            dobInputs.forEach((dobInput, index) => {
+                const ageInput = ageInputs[index];
+                if (ageInput) {
+                    dobInput.addEventListener('change', function() {
+                        updateAgeFromDOB(this, ageInput);
+                    });
+                }
+            });
+        });
+
+        // Handle Login
+        function handleLogin(e) {
+            e.preventDefault();
+            const formId = e.target.id;
+            
+            if (formId.includes('doctor')) {
+                const licenseNumber = document.getElementById('doctor-license-login').value;
+                const password = document.getElementById('doctor-password-login').value;
+                
+                const doctor = users.doctors.find(d => d.id === licenseNumber && d.password === password);
+                
+                if (doctor) {
+                    currentUser = {
+                        ...doctor,
+                        type: 'doctor'
+                    };
+                    
+                    // Show doctor navigation
+                    document.getElementById('doctor-nav').style.display = 'block';
+                    
+                    updateProfileData();
+                    showPage('main-page');
+                    showNotification('Doctor login successful! Welcome back, ' + doctor.name, 'success');
+                } else {
+                    showNotification('Invalid license number or password', 'danger');
+                }
+                
+            } else if (formId.includes('patient')) {
+                const medicalId = document.getElementById('patient-medical-id').value;
+                const password = document.getElementById('patient-password-login').value;
+                
+                const patient = users.patients.find(p => p.id === medicalId && p.password === password);
+                
+                if (patient) {
+                    currentUser = {
+                        ...patient,
+                        type: 'patient'
+                    };
+                    
+                    updateProfileData();
+                    showPage('main-page');
+                    
+                    // Show pending alert if not approved
+                    if (patient.status !== 'approved') {
+                        document.getElementById('pending-alert').style.display = 'block';
+                    }
+                    
+                    showNotification('Patient login successful! Welcome back, ' + patient.name, 'success');
+                } else {
+                    showNotification('Invalid medical ID or password', 'danger');
+                }
+            }
+        }
+
+        // Handle Doctor Signup
+        function handleSignup(e) {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const formId = e.target.id;
+            
+            if (formId.includes('doctor')) {
+                const newDoctor = {
+                    id: 'DOC' + String(users.doctors.length + 1).padStart(3, '0'),
+                    password: 'password123', // In real app, this would be hashed
+                    name: e.target.querySelector('#doctor-name').value,
+                    age: parseInt(e.target.querySelector('#doctor-age').value),
+                    dob: e.target.querySelector('#doctor-dob').value,
+                    gender: e.target.querySelector('#doctor-gender').value,
+                    license: e.target.querySelector('#doctor-license').value,
+                    specialization: e.target.querySelector('#doctor-specialization').value,
+                    phone: 'Not provided'
+                };
+                
+                users.doctors.push(newDoctor);
+                
+                currentUser = {
+                    ...newDoctor,
+                    type: 'doctor'
+                };
+                
+                document.getElementById('doctor-nav').style.display = 'block';
+                updateProfileData();
+                showPage('main-page');
+                showNotification('Doctor account created successfully!', 'success');
+            }
+        }
+
+        // Handle Patient Signup (goes to pending approval)
+        function handlePatientSignup(e) {
+            e.preventDefault();
+            
+            const newPatient = {
+                id: 'PAT' + String(pendingPatients.length + users.patients.length + 1).padStart(3, '0'),
+                name: e.target.querySelector('#patient-name').value,
+                age: parseInt(e.target.querySelector('#patient-age').value),
+                dob: e.target.querySelector('#patient-dob').value,
+                gender: e.target.querySelector('#patient-gender').value,
+                phone: e.target.querySelector('#patient-phone').value,
+                medicalConditions: e.target.querySelector('#patient-medical-condition').value || 'None reported',
+                status: 'pending',
+                submissionDate: new Date().toISOString().split('T')[0]
+            };
+            
+            pendingPatients.push(newPatient);
+            
+            showNotification('Application submitted successfully! You will be notified once approved by our medical team.', 'success');
+            
+            // Reset form
+            e.target.reset();
+        }
+
+        // Load Doctor Dashboard
+        function loadDoctorDashboard() {
+            const dashboardContainer = document.getElementById('patient-approvals');
+            dashboardContainer.innerHTML = '';
+            
+            // Update counters
+            const pendingCount = pendingPatients.filter(p => p.status === 'pending').length;
+            const approvedCount = users.patients.length;
+            const rejectedCount = pendingPatients.filter(p => p.status === 'rejected').length;
+            const totalCount = pendingCount + approvedCount + rejectedCount;
+            
+            document.getElementById('pending-count').textContent = pendingCount;
+            document.getElementById('approved-count').textContent = approvedCount;
+            document.getElementById('rejected-count').textContent = rejectedCount;
+            document.getElementById('total-count').textContent = totalCount;
+            
+            // Display pending patients
+            pendingPatients.forEach((patient, index) => {
+                const card = createPatientApprovalCard(patient, index);
+                dashboardContainer.appendChild(card);
+            });
+            
+            // Display approved patients
+            users.patients.forEach(patient => {
+                const card = createPatientApprovalCard({...patient, status: 'approved'}, -1);
+                dashboardContainer.appendChild(card);
+            });
+        }
+
+        // Create Patient Approval Card
+        function createPatientApprovalCard(patient, index) {
+            const card = document.createElement('div');
+            card.className = `card approval-card ${patient.status}`;
+            
+            let statusBadge = '';
+            let actionButtons = '';
+            
+            if (patient.status === 'pending') {
+                statusBadge = '<span class="badge bg-warning status-badge">Pending</span>';
+                actionButtons = `
+                    <button class="btn btn-success btn-sm me-2" onclick="approvePatient(${index})">
+                        <i class="fas fa-check me-1"></i>Approve
+                    </button>
+                    <button class="btn btn-danger btn-sm" onclick="rejectPatient(${index})">
+                        <i class="fas fa-times me-1"></i>Reject
+                    </button>
+                `;
+            } else if (patient.status === 'approved') {
+                statusBadge = '<span class="badge bg-success status-badge">Approved</span>';
+                actionButtons = `
+                    <button class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-eye me-1"></i>View Records
+                    </button>
+                `;
+            } else if (patient.status === 'rejected') {
+                statusBadge = '<span class="badge bg-danger status-badge">Rejected</span>';
+            }
+            
+            card.innerHTML = `
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h5 class="card-title mb-0">${patient.name}</h5>
+                                ${statusBadge}
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <p class="text-muted mb-1"><strong>Age:</strong> ${patient.age}</p>
+                                    <p class="text-muted mb-1"><strong>Gender:</strong> ${patient.gender}</p>
+                                    <p class="text-muted mb-1"><strong>Phone:</strong> ${patient.phone}</p>
+                                </div>
+                                <div class="col-sm-6">
+                                    <p class="text-muted mb-1"><strong>DOB:</strong> ${patient.dob}</p>
+                                    ${patient.submissionDate ? `<p class="text-muted mb-1"><strong>Applied:</strong> ${patient.submissionDate}</p>` : ''}
+                                    <p class="text-muted mb-1"><strong>ID:</strong> ${patient.id}</p>
+                                </div>
+                            </div>
+                            <div class="mt-2">
+                                <p class="text-muted mb-0"><strong>Medical Conditions:</strong></p>
+                                <p class="text-muted small">${patient.medicalConditions}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4 d-flex flex-column justify-content-center">
+                            <div class="text-end">
+                                ${actionButtons}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            return card;
+        }
+
+        // Approve Patient
+        function approvePatient(index) {
+            const patient = pendingPatients[index];
+            
+            // Generate password for new patient
+            const newPatient = {
+                ...patient,
+                password: 'patient123',
+                status: 'approved'
+            };
+            
+            // Move to approved patients
+            users.patients.push(newPatient);
+            
+            // Remove from pending
+            pendingPatients.splice(index, 1);
+            
+            // Reload dashboard
+            loadDoctorDashboard();
+            
+            showNotification(`Patient ${patient.name} has been approved and can now login with ID: ${patient.id}`, 'success');
+        }
+
+        // Reject Patient
+        function rejectPatient(index) {
+            const patient = pendingPatients[index];
+            patient.status = 'rejected';
+            
+            // Reload dashboard
+            loadDoctorDashboard();
+            
+            showNotification(`Patient ${patient.name} application has been rejected`, 'warning');
+        }
+
+        // Update profile data across pages
+        function updateProfileData() {
+            if (!currentUser) return;
+            
+            const name = currentUser.name;
+            const dob = new Date(currentUser.dob).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            const gender = currentUser.gender;
+            const age = currentUser.age.toString();
+            const phone = currentUser.phone;
+            
+            // Update profile page
+            document.getElementById('profile-name').textContent = name;
+            document.getElementById('profile-dob').textContent = dob;
+            document.getElementById('profile-gender').textContent = gender;
+            document.getElementById('profile-age').textContent = age;
+            document.getElementById('profile-phone').textContent = phone;
+            
+            // Update report page
+            document.getElementById('report-name').textContent = name;
+            document.getElementById('report-dob').textContent = dob;
+            document.getElementById('report-gender').textContent = gender;
+            document.getElementById('report-age').textContent = age;
+            document.getElementById('report-phone').textContent = phone;
+            
+            // Handle patient status display
+            if (currentUser.type === 'patient') {
+                const statusElement = document.getElementById('profile-status');
+                const healthDashboard = document.getElementById('health-dashboard');
+                const pendingDashboard = document.getElementById('pending-dashboard');
+                const activitiesSection = document.getElementById('activities-section');
+                const viewReportsBtn = document.getElementById('view-reports-btn');
+                
+                if (currentUser.status === 'approved') {
+                    statusElement.textContent = 'Approved';
+                    statusElement.className = 'badge bg-success';
+                    healthDashboard.style.display = 'block';
+                    pendingDashboard.style.display = 'none';
+                    activitiesSection.style.display = 'block';
+                    viewReportsBtn.style.display = 'block';
+                } else {
+                    statusElement.textContent = 'Pending';
+                    statusElement.className = 'badge bg-warning';
+                    healthDashboard.style.display = 'none';
+                    pendingDashboard.style.display = 'block';
+                    activitiesSection.style.display = 'none';
+                    viewReportsBtn.style.display = 'none';
+                }
+            }
+        }
+
+        // Update age from DOB
+        function updateAgeFromDOB(dobInput, ageInput) {
+            const dob = new Date(dobInput.value);
+            const today = new Date();

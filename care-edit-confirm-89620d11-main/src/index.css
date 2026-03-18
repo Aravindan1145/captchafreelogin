@@ -1,0 +1,91 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Medical Health Monitoring Design System */
+@layer base {
+  :root {
+    /* Medical Brand Colors */
+    --medical-primary: 220 90% 56%;
+    --medical-primary-dark: 220 90% 40%;
+    --medical-secondary: 268 83% 58%;
+    --medical-accent: 145 68% 55%;
+    --medical-warning: 43 96% 56%;
+    --medical-success: 145 68% 55%;
+    --medical-error: 0 84% 60%;
+    
+    /* Health Status Colors */
+    --health-excellent: 145 68% 55%;
+    --health-good: 84 81% 44%;
+    --health-fair: 43 96% 56%;
+    --health-poor: 0 84% 60%;
+    
+    /* Medical Gradients */
+    --gradient-medical: linear-gradient(135deg, hsl(var(--medical-primary)) 0%, hsl(var(--medical-secondary)) 100%);
+    --gradient-health: linear-gradient(180deg, hsl(var(--medical-primary) / 0.05) 0%, hsl(var(--medical-secondary) / 0.1) 100%);
+    --gradient-report: linear-gradient(135deg, hsl(var(--health-excellent)) 0%, hsl(var(--medical-primary)) 100%);
+    
+    /* Medical Shadows */
+    --shadow-medical: 0 10px 30px -10px hsl(var(--medical-primary) / 0.3);
+    --shadow-card: 0 4px 20px -4px hsl(var(--medical-primary) / 0.15);
+    --shadow-hover: 0 8px 25px -8px hsl(var(--medical-primary) / 0.25);
+    
+    /* Core Design System */
+    --background: 220 23% 98%;
+    --foreground: 220 39% 11%;
+    --card: 0 0% 100%;
+    --card-foreground: 220 39% 11%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 39% 11%;
+    --primary: var(--medical-primary);
+    --primary-foreground: 0 0% 98%;
+    --secondary: 220 14% 96%;
+    --secondary-foreground: 220 39% 11%;
+    --muted: 220 14% 96%;
+    --muted-foreground: 220 8% 46%;
+    --accent: var(--medical-accent);
+    --accent-foreground: 0 0% 98%;
+    --destructive: var(--medical-error);
+    --destructive-foreground: 0 0% 98%;
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: var(--medical-primary);
+    --radius: 0.75rem;
+    
+    /* Animations */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  }
+
+  .dark {
+    --background: 220 39% 11%;
+    --foreground: 220 23% 98%;
+    --card: 220 39% 11%;
+    --card-foreground: 220 23% 98%;
+    --popover: 220 39% 11%;
+    --popover-foreground: 220 23% 98%;
+    --primary: var(--medical-primary);
+    --primary-foreground: 220 39% 11%;
+    --secondary: 220 16% 22%;
+    --secondary-foreground: 220 23% 98%;
+    --muted: 220 16% 22%;
+    --muted-foreground: 220 8% 54%;
+    --accent: var(--medical-accent);
+    --accent-foreground: 220 39% 11%;
+    --destructive: var(--medical-error);
+    --destructive-foreground: 220 23% 98%;
+    --border: 220 16% 22%;
+    --input: 220 16% 22%;
+    --ring: var(--medical-primary);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
